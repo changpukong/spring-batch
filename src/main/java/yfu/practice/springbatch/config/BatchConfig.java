@@ -9,6 +9,9 @@ import org.springframework.batch.core.configuration.annotation.DefaultBatchConfi
 import org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
+import org.springframework.boot.autoconfigure.batch.BatchProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
@@ -26,7 +29,7 @@ public class BatchConfig {
     }
     
 	@Bean
-	public BatchConfigurer batchConfigurer(DataSource dataSource, EntityManagerFactory entityManagerFactory) {
+	public BatchConfigurer batchConfigurer(DataSource dataSource, EntityManagerFactory entityManagerFactory, BatchProperties properties) {
 		return new DefaultBatchConfigurer(dataSource) {
 
 			private PlatformTransactionManager transactionManager;
@@ -50,6 +53,16 @@ public class BatchConfig {
 				jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor());
 				jobLauncher.afterPropertiesSet();
 				return jobLauncher;
+			}
+			
+			@Override
+			public JobRepository createJobRepository() throws Exception {
+				JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
+				factory.setDataSource(dataSource);
+				factory.setTransactionManager(getTransactionManager());
+				factory.setTablePrefix(properties.getJdbc().getTablePrefix());
+				factory.afterPropertiesSet();
+				return factory.getObject();
 			}
 		};
 	}
