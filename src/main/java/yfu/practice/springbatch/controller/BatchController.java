@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import yfu.practice.springbatch.repository.BatchJobExecutionRepo;
+
 @RestController
 public class BatchController {
     
@@ -28,6 +30,9 @@ public class BatchController {
     
     @Autowired
     private JobLauncher jobLauncher;
+    
+    @Autowired
+    private BatchJobExecutionRepo batchJobExecutionRepo;
     
     @GetMapping(value = "/testGroupItem")
     public void testGroupItem() throws Exception {
@@ -48,5 +53,10 @@ public class BatchController {
     	Job job = jobRegistry.getJob("testTransactionManagerJob");
     	JobParameters jobParameters = new JobParametersBuilder().addDate("date", new Date()).toJobParameters();
     	jobLauncher.run(job, jobParameters);
+    }
+    
+    @GetMapping(value = "/test")
+    public void test() {
+    	System.err.println(batchJobExecutionRepo.findById(241L));
     }
 }

@@ -18,7 +18,7 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
-//@Configuration
+@Configuration
 public class BatchConfig {
 	
     @Bean
@@ -33,7 +33,7 @@ public class BatchConfig {
 		return new DefaultBatchConfigurer(dataSource) {
 
 			private PlatformTransactionManager transactionManager;
-
+			
 			@Override
 			public PlatformTransactionManager getTransactionManager() {
 				if (this.transactionManager == null) {
@@ -61,7 +61,7 @@ public class BatchConfig {
 				factory.setDataSource(dataSource);
 				factory.setTransactionManager(getTransactionManager());
 				factory.setTablePrefix(properties.getJdbc().getTablePrefix());
-//				factory.setIsolationLevelForCreate("ISOLATION_READ_COMMITTED");
+				factory.setIsolationLevelForCreate("ISOLATION_READ_COMMITTED");
 				factory.afterPropertiesSet();
 				return factory.getObject();
 			}

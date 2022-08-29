@@ -8,7 +8,7 @@ import org.springframework.batch.core.configuration.support.JobRegistryBeanPostP
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+//@Configuration
 public class BatchConfig2 extends DefaultBatchConfigurer {
 	
     @Bean

@@ -6,7 +6,7 @@ spring:
     job:
       enabled: false
     jdbc:
-      initialize-schema: never
+      initialize-schema: always
       table-prefix: LON_
   datasource:
     driver-class-name: oracle.jdbc.driver.OracleDriver
