@@ -3,19 +3,15 @@ package yfu.practice.springbatch.entity;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 @Entity
 @Table(name = "LON_STEP_EXECUTION")
@@ -75,13 +71,14 @@ public class BatchStepExecution implements Serializable {
 
 	@Column(name = "LAST_UPDATED")
 	private Timestamp lastUpdated;
-	
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "batchStepExecution")
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private BatchStepExecutionContext batchStepExecutionContext;
+//	
+//	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "batchStepExecution")
+//    @ToString.Exclude
+//    @EqualsAndHashCode.Exclude
+//    private BatchStepExecutionContext batchStepExecutionContext;
 	
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "JOB_EXECUTION_ID")
     private BatchJobExecution batchJobExecution;
+    
 }

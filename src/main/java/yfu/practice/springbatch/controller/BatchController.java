@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import yfu.practice.springbatch.entity.BatchJobExecution;
 import yfu.practice.springbatch.repository.BatchJobExecutionRepo;
 
 @RestController
@@ -57,6 +58,8 @@ public class BatchController {
     
     @GetMapping(value = "/test")
     public void test() {
-    	System.err.println(batchJobExecutionRepo.findById(241L));
+    	BatchJobExecution batchJobExecution = batchJobExecutionRepo.findById(210L).orElseThrow();
+    	System.err.println(batchJobExecution);
+    	System.err.println(batchJobExecution.getBatchStepExecutionSet());
     }
 }

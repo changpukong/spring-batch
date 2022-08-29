@@ -5,16 +5,10 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 @Entity
 @Table(name = "LON_JOB_EXECUTION_PARAMS")
@@ -47,12 +41,5 @@ public class BatchJobExecutionParams implements Serializable {
 	
 	@Column(name = "IDENTIFYING")
 	private String identifying;
-	
-//	@OneToOne(fetch = FetchType.LAZY)
-//	@MapsId
-//    @JoinColumn(name = "JOB_EXECUTION_ID")
-//    @ToString.Exclude
-//    @EqualsAndHashCode.Exclude
-//	private BatchJobExecution batchJobExecution;
 	
 }
