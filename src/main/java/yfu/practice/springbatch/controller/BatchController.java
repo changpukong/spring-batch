@@ -57,9 +57,9 @@ public class BatchController {
     }
     
     @GetMapping(value = "/test")
-    public void test() {
-    	BatchJobExecution batchJobExecution = batchJobExecutionRepo.findById(210L).orElseThrow();
-    	System.err.println(batchJobExecution);
-    	System.err.println(batchJobExecution.getBatchStepExecutionSet());
+    public void test() throws Exception {
+    	Job job = jobRegistry.getJob("clearBatchLog");
+    	JobParameters jobParameters = new JobParametersBuilder().addDate("date", new Date()).addString("expiredDays", "1").toJobParameters();
+    	jobLauncher.run(job, jobParameters);
     }
 }
