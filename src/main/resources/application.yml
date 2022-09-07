@@ -7,7 +7,7 @@ spring:
       enabled: false
     jdbc:
       initialize-schema: always
-      table-prefix: LON_
+#      table-prefix: LON_
   datasource:
     driver-class-name: oracle.jdbc.driver.OracleDriver
     url: jdbc:oracle:thin:@localhost:1521:xe

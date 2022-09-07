@@ -35,4 +35,5 @@ public abstract class AbstractCompletionPolicy<T> extends CompletionPolicySuppor
     }
     
     public abstract boolean isComplete(T item, T nextItem);
+    
 }

@@ -7,4 +7,5 @@ import yfu.practice.springbatch.entity.YfuCard;
 
 @Repository
 public interface YfuCardRepo extends JpaRepository<YfuCard, String> {
+	
 }

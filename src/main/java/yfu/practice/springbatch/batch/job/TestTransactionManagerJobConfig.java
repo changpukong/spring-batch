@@ -4,11 +4,8 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +15,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import yfu.practice.springbatch.entity.YfuCard;
 import yfu.practice.springbatch.repository.YfuCardRepo;
 
+/**
+ * 測試交易
+ * @author yfu
+ */
 @Configuration
 public class TestTransactionManagerJobConfig {
 	
@@ -35,7 +36,7 @@ public class TestTransactionManagerJobConfig {
 
 	@Bean
 	public Job testTransactionManagerJob() {
-		return jobBuilderFactory.get("testTransactionManagerJob")
+		return jobBuilderFactory.get("testTransactionManager")
 				.start(testTransactionManagerStep())
 				.listener(new JobExecutionListener() {
 					
@@ -58,20 +59,17 @@ public class TestTransactionManagerJobConfig {
 	@Bean
 	public Step testTransactionManagerStep() {
 		return stepBuilderFactory.get("testTransactionManagerStep")
-				.tasklet(new Tasklet() {
+				.tasklet((contribution, chunkContext) -> {
+					YfuCard yfuCard = new YfuCard();
+					yfuCard.setCardId("123");
+					yfuCard.setType("A");
+					yfuCardRepo.save(yfuCard);
 					
-					@Override
-					public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-						YfuCard yfuCard = new YfuCard();
-						yfuCard.setCardId("123");
-						yfuCard.setType("A");
-						yfuCardRepo.save(yfuCard);
-						
-						jdbcTemplate.update("update YFU_CARD set TYPE = 'C' where CARD_ID = '123'");
-						
-						return RepeatStatus.FINISHED;
-					}
+					jdbcTemplate.update("update YFU_CARD set TYPE = 'C' where CARD_ID = '123'");
+					
+					return RepeatStatus.FINISHED;
 				})
 				.build();
 	}
+	
 }

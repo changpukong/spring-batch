@@ -1,65 +1,51 @@
 package yfu.practice.springbatch.controller;
 
-import java.util.Date;
+import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.configuration.JobRegistry;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
 import org.springframework.batch.core.launch.JobInstanceAlreadyExistsException;
-import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import yfu.practice.springbatch.entity.BatchJobExecution;
-import yfu.practice.springbatch.repository.BatchJobExecutionRepo;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 public class BatchController {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(BatchController.class);
-    
-    @Autowired
-    private JobOperator jobOperator;
-    
-    @Autowired
-    private JobRegistry jobRegistry;
-    
-    @Autowired
-    private JobLauncher jobLauncher;
-    
-    @Autowired
-    private BatchJobExecutionRepo batchJobExecutionRepo;
-    
-    @GetMapping(value = "/testGroupItem")
-    public void testGroupItem() throws Exception {
-        try {
-            String params = new StringBuilder()
-                    .append("today=20211109").append(',')
-                    .append("tomorrow=20211110")
-                    .toString();
-            jobOperator.start("testGroupItem", params);
-        } catch (JobInstanceAlreadyExistsException e) {
-            LOGGER.debug("Job實例已存在，產生新的實例繼續執行", e);
-            jobOperator.startNextInstance("testGroupItem");
-        }
-    }
-    
-    @GetMapping(value = "/testTransactionManagerJob")
-    public void testTransactionManagerJob() throws Exception {
-    	Job job = jobRegistry.getJob("testTransactionManagerJob");
-    	JobParameters jobParameters = new JobParametersBuilder().addDate("date", new Date()).toJobParameters();
-    	jobLauncher.run(job, jobParameters);
-    }
-    
-    @GetMapping(value = "/test")
-    public void test() throws Exception {
-    	Job job = jobRegistry.getJob("clearBatchLog");
-    	JobParameters jobParameters = new JobParametersBuilder().addDate("date", new Date()).addString("expiredDays", "1").toJobParameters();
-    	jobLauncher.run(job, jobParameters);
-    }
+
+	@Autowired
+	private JobOperator jobOperator;
+	
+	@Autowired
+	private Scheduler scheduler;
+
+	@GetMapping(value = "/groupItem")
+	public void groupItem() throws Exception {
+		String jobName = "groupItem";
+		try {
+			jobOperator.start(jobName, "today=20211109,tomorrow=20211110");
+		} catch (JobInstanceAlreadyExistsException e) {
+			log.debug("Job實例已存在，產生新的實例繼續執行", e);
+			jobOperator.startNextInstance(jobName);
+		}
+	}
+
+	@GetMapping(value = "/testTransactionManager")
+	public void testTransactionManager() throws Exception {
+		jobLaunch("testTransactionManager");
+	}
+
+	private void jobLaunch(String jobName) throws Exception {	
+		JobKey jobKey = new JobKey(jobName);
+		JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+		JobDataMap jobDataMap = jobDetail.getJobDataMap();
+		jobDataMap.put("uuid", UUID.randomUUID().toString().replace("-", ""));
+		scheduler.triggerJob(jobKey, jobDataMap);
+	}
+	
 }

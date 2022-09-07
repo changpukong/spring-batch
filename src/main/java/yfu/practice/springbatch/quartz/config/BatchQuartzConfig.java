@@ -10,22 +10,18 @@ import org.springframework.context.annotation.Configuration;
 
 import yfu.practice.springbatch.quartz.job.BatchQuartzJob;
 
-//@Configuration
+@Configuration
 public class BatchQuartzConfig {
-	
-	private static final String TEST_JOB = "testJob";
-	
-	private static final String TEST_JOB_CRON = "*/5 * * * * ?";
 
-	private static final String TEST_JOB_2 = "testJob2";
+	private static final String TEST = "test";
 
-	private static final String TEST_JOB_CRON_2 = "*/15 * * * * ?";
-	
+	private static final String TEST_CRON = "0 0 * * * ?";
+
 	@Bean
 	public JobDetail testJobDetail() {
 		return JobBuilder.newJob(BatchQuartzJob.class)
-				.withIdentity(TEST_JOB)
-				.usingJobData("jobName", TEST_JOB)
+				.withIdentity(TEST)
+				.usingJobData("jobName", TEST)
 				.storeDurably()
 				.build();
 	}
@@ -33,19 +29,10 @@ public class BatchQuartzConfig {
 	@Bean
 	public Trigger testJobTrigger() {
 		return TriggerBuilder.newTrigger()
-				.withIdentity(TEST_JOB)
+				.withIdentity(TEST)
 				.forJob(testJobDetail())
-				.withSchedule(CronScheduleBuilder.cronSchedule(TEST_JOB_CRON))
+				.withSchedule(CronScheduleBuilder.cronSchedule(TEST_CRON))
 				.build();
 	}
-	
-	@Bean
-	public Trigger testJobTrigger2() {
-		return TriggerBuilder.newTrigger()
-				.withIdentity(TEST_JOB_2)
-				.forJob(testJobDetail())
-				.withSchedule(CronScheduleBuilder.cronSchedule(TEST_JOB_CRON_2))
-				.build();
-	}
-	
+
 }

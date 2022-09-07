@@ -8,4 +8,5 @@ public class YfuCardDto {
     private String cardId;
     
     private String type;
+    
 }

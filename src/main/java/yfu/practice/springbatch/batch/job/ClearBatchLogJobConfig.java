@@ -10,6 +10,10 @@ import org.springframework.context.annotation.Configuration;
 
 import yfu.practice.springbatch.tasklet.ClearBatchLogTasklet;
 
+/**
+ * 清除過期Spring Batch log
+ * @author yfu
+ */
 @Configuration
 public class ClearBatchLogJobConfig {
 	

@@ -20,20 +20,21 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 public class BatchConfig {
-	
-    @Bean
-    public JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor(JobRegistry jobRegistry) {
-        JobRegistryBeanPostProcessor postProcessor = new JobRegistryBeanPostProcessor();
-        postProcessor.setJobRegistry(jobRegistry);
-        return postProcessor;
-    }
-    
+
 	@Bean
-	public BatchConfigurer batchConfigurer(DataSource dataSource, EntityManagerFactory entityManagerFactory, BatchProperties properties) {
+	public JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor(JobRegistry jobRegistry) {
+		JobRegistryBeanPostProcessor postProcessor = new JobRegistryBeanPostProcessor();
+		postProcessor.setJobRegistry(jobRegistry);
+		return postProcessor;
+	}
+
+	@Bean
+	public BatchConfigurer batchConfigurer(DataSource dataSource, EntityManagerFactory entityManagerFactory,
+			BatchProperties properties) {
 		return new DefaultBatchConfigurer(dataSource) {
 
 			private PlatformTransactionManager transactionManager;
-			
+
 			@Override
 			public PlatformTransactionManager getTransactionManager() {
 				if (this.transactionManager == null) {
@@ -54,17 +55,28 @@ public class BatchConfig {
 				jobLauncher.afterPropertiesSet();
 				return jobLauncher;
 			}
-			
+
 			@Override
 			public JobRepository createJobRepository() throws Exception {
 				JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
 				factory.setDataSource(dataSource);
 				factory.setTransactionManager(getTransactionManager());
-				factory.setTablePrefix(properties.getJdbc().getTablePrefix());
+				String tablePrefix = properties.getJdbc().getTablePrefix();
+				if (tablePrefix != null && !tablePrefix.isEmpty()) {
+					factory.setTablePrefix(properties.getJdbc().getTablePrefix());
+				}
 				factory.setIsolationLevelForCreate("ISOLATION_READ_COMMITTED");
 				factory.afterPropertiesSet();
 				return factory.getObject();
 			}
+
+			// MetaData不寫入DB
+//		    @Override
+//		    public void setDataSource(DataSource dataSource) {
+//		    	// nothing
+//		    }
+
 		};
 	}
+
 }

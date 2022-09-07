@@ -20,7 +20,7 @@ public class TestJobConfig {
 
 	@Bean
 	public Job testJob() {
-		return jobBuilderFactory.get("testJob")
+		return jobBuilderFactory.get("test")
 				.start(testStep())
 				.build();
 	}

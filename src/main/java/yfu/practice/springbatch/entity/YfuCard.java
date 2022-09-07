@@ -22,4 +22,5 @@ public class YfuCard implements Serializable {
 
     @Column(name = "TYPE")
     private String type;
+    
 }
